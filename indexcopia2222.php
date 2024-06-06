@@ -21,8 +21,8 @@ if (!empty($urlArchivo) &&!empty($empresaId) && !empty($urlArchivo['tmp_name']))
 
   if ($xlsx = SimpleXLSX::parse($tempFile)) {
     $formatoDetectado = detectarFormato($xlsx);
-
-
+    // echo $formatoDetectado;
+    // die();
     
     switch ($formatoDetectado) {
       case 'formatoA':
@@ -58,6 +58,9 @@ function detectarFormato($xlsx) {
   ];
 
   
+  // echo "<pre>";
+  // print_r($xlsx->rows() );
+  // die();
   foreach ($xlsx->rows() as $row) {
     foreach ($formatos as $formato => $headers) {
       if (count(array_intersect($headers, $row)) == count($headers)) {
@@ -121,8 +124,8 @@ function enviarDatosPorCurl($url, $empresaId, $urlArchivo) {
         return ['error' => "cURL Error #:" . $err];
     } else {
 
-
-        
+      print_r($result);
+      die();
         return json_decode($result, true); // Asumiendo que la respuesta es JSON
     }
 }

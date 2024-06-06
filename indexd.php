@@ -40,7 +40,7 @@ $mapeoColumnas = [
 
 if (!empty($urlArchivo) && !empty($empresaId)) {
     $tempFile = tempnam(sys_get_temp_dir(), 'xlsx');
-    $fileContent = file_get_contents($urlArchivo);
+    $fileContent = file_get_contents($urlArchivo['tmp_name']);
     if ($fileContent === false) {
         die(json_encode(['error' => 'Error al descargar el archivo Excel.']));
     }
@@ -48,7 +48,7 @@ if (!empty($urlArchivo) && !empty($empresaId)) {
     if ($xlsx = SimpleXLSX::parse($tempFile)) {
         $headers = $xlsx->rows()[8]; // Novena fila contiene los encabezados
         foreach ($xlsx->rows() as $rowIndex => $row) {
-            if ($rowIndex === 0 || $rowIndex === 8) continue; // Omitir las dos primeras filas (cabeceras)
+            if ($rowIndex === 0 || $rowIndex == 8) continue; // Omitir las dos primeras filas (cabeceras)
             $mappedData = [];
             foreach ($headers as $index => $header) {
                 if (isset($mapeoColumnas[$header])) {
@@ -134,7 +134,7 @@ if ($count > 0) {
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmtInsert = $conn->prepare($sqlInsert);
     $stmtInsert->bind_param( 
-        "sssisssssssssssss", 
+        "sssisssssssss", 
         $mappedData['NumeroPrestamo'], 
         $mappedData['CedulaRNC'], 
         $mappedData['Nombre'], 
