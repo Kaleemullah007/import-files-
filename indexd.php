@@ -48,7 +48,7 @@ if (!empty($urlArchivo) && !empty($empresaId)) {
     if ($xlsx = SimpleXLSX::parse($tempFile)) {
         $headers = $xlsx->rows()[8]; // Novena fila contiene los encabezados
         foreach ($xlsx->rows() as $rowIndex => $row) {
-            if ($rowIndex === 0 || $rowIndex == 8) continue; // Omitir las dos primeras filas (cabeceras)
+            if ($rowIndex === 0 || $rowIndex <= 8) continue; // Omitir las dos primeras filas (cabeceras)
             $mappedData = [];
             foreach ($headers as $index => $header) {
                 if (isset($mapeoColumnas[$header])) {
@@ -80,6 +80,9 @@ $stmtCheck->bind_result($count);
 $stmtCheck->fetch();
 $stmtCheck->close();
 
+// echo $mappedData['NumeroPrestamo'] .'--'. $empresaId;
+// echo $count;
+// die();
 if ($count > 0) {
     // Actualizar los datos si ya existe el CodigoPrestamo
     $sqlUpdate = "UPDATE datoscrediticios SET 
@@ -97,7 +100,7 @@ if ($count > 0) {
                 WHERE CodigoPrestamo = ? AND empresa_id = ?";
     $stmtUpdate = $conn->prepare($sqlUpdate);
     $stmtUpdate->bind_param( 
-        "sssssssssssi", 
+        "ssssssssssssi", 
         $mappedData['CedulaRNC'], 
         $mappedData['Nombre'], 
         $mappedData['Direccion'], 
@@ -116,6 +119,8 @@ if ($count > 0) {
     $stmtUpdate->close();
 } else {
     // Insertar nuevo registro
+
+
     $sqlInsert = "INSERT INTO datoscrediticios (
                     CodigoPrestamo, 
                     cliente_cedula, 
