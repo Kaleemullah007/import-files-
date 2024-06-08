@@ -4,16 +4,33 @@ require'vendor/autoload.php';
 use Shuchkin\SimpleXLSX;
 
 $data = json_decode(file_get_contents('php://input'), true);
+$method = $_SERVER['REQUEST_METHOD'];
+if($method == 'GET')
+$link = 'link';
+else if($method == 'POST')
+$link = 'file';
 
 
-$urlArchivo = $_FILES['urlarchivo'] ?? '';
-$empresaId = $_REQUEST['empresa_id'] ?? '';
+
+if($link == 'link'){
+  $urlArchivo = $data['urlarchivo'] ?? '';
+  $empresaId = $data['empresa_id'] ?? '';
+}else{  
+  $empresaId = $_REQUEST['empresa_id'] ?? '';
+  $urlArchivo = $_FILES['urlarchivo'] ?? '';
+  $urlArchivo = $urlArchivo['tmp_name'];
+}
 
 
 
-if (!empty($urlArchivo) &&!empty($empresaId) && !empty($urlArchivo['tmp_name'])) {
+//   echo "<pre> sss";
+// print($link);
+
+// die();
+
+if (!empty($urlArchivo) && !empty($empresaId)) {
   $tempFile = tempnam(sys_get_temp_dir(), 'xlsx');
-  $fileContent = file_get_contents($urlArchivo['tmp_name']);
+  $fileContent = file_get_contents($urlArchivo);
   if ($fileContent === false) {
     die(json_encode(['error' => 'Error al descargar el archivo Excel.']));
   }

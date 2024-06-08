@@ -48,7 +48,7 @@ $mapeoColumnas = [
 if (!empty($urlArchivo) && !empty($empresaId)) {
     // Descargar archivo Excel
     $tempFile = tempnam(sys_get_temp_dir(), 'xlsx');
-    $fileContent = file_get_contents($urlArchivo['tmp_name']);
+    $fileContent = file_get_contents($urlArchivo);
     if ($fileContent === false) {
         die(json_encode(['error' => 'Error al descargar el archivo Excel.']));
     }
